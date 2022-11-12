@@ -23,6 +23,7 @@ def rem_all_links(path):
 # loop through subdirectories
 def loop_dir(src, dst, file_list):
 	mime = magic.Magic(mime=True)   # required for magic library to identify file types
+	counter = 1
 
 	for item in os.listdir(src):
 		item_path = src+item
@@ -31,17 +32,20 @@ def loop_dir(src, dst, file_list):
 		# if current item is a file
 		if os.path.isfile(item_path):
 			# print("Is File:\t"+item)
+			# print(magic.from_file(item_path))
 
 			filename = mime.from_file(item_path)
 
 			# if file is a video
-			if filename.find('video') != -1:
+			if filename.find('python') != -1:
 				# print("Is Video:\t"+item)
-				file_list.append(os.path.abspath(item_path))
-				try:
-					os.symlink(item_path, dst+item)
-				except(FileExistsError):
-					continue
+				# file_list.append(os.path.abspath(item_path))
+				file_list.append(dst+str(counter)+" "+item)
+				counter += 1
+				# try:
+				# 	os.symlink(item_path, dst+item)
+				# except(FileExistsError):
+				# 	continue
 
 		# if current item is a directory
 		# elif os.path.isdir(item_path):
@@ -53,8 +57,8 @@ def loop_dir(src, dst, file_list):
 			loop_dir(item_path, dst, file_list)
 
 def main():
-	dst = "../Videos/All/"
-	src = "../Videos"
+	dst = "../../All/"
+	src = "../../"
 	file_list = []
 
 	# test listdir
