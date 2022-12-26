@@ -2,3 +2,4 @@
 venv
 ignored
 test
+.DS_Store
