@@ -28,11 +28,16 @@ def loop_dir(src, dst, counter=-1):
 	dir_list = []
 	all_list = os.listdir(src)
 
+	# test var
+	loop_counter = 0
+
 	while True:
 		new_dir = True
 
 		for item in all_list:
 			item_path = src+item
+
+			loop_counter += 1
 
 			# if current item is a file
 			if os.path.isfile(item_path):
@@ -40,6 +45,7 @@ def loop_dir(src, dst, counter=-1):
 
 				# if file is of required type
 				if file_type.find('audio') != -1:
+					print("Matched: "+item)
 					# append counter to filename if option was enabled
 					if counter >= 0:
 						if new_dir:
@@ -51,13 +57,22 @@ def loop_dir(src, dst, counter=-1):
 
 			# if current item is a sub directory
 			else:
+				print("Dir: "+item_path)
 				dir_list.append(get_dir_path(item_path))
+				# dir_list.append(item_path+'/')
 	
 		if len(dir_list) == 0:
+			print("dir list == 0")
 			break
 		else:
+			# print("dir list size = "+str(len(dir_list)))
+			all_list.clear()
 			all_list = dir_list[:]
 			dir_list.clear()
+			src = ""
+			# print("dir list size = "+str(len(dir_list)))
+			if loop_counter > 5:
+				sys.exit()
 	
 	return file_list
 
@@ -65,60 +80,62 @@ def loop_dir(src, dst, counter=-1):
 
 # loop through subdirectories
 # def loop_dir(src, dst, file_list, counter = -1, new_sub_dir = False):
-	# mime = magic.Magic(mime=True)   # required for magic library to identify file types
+# 	mime = magic.Magic(mime=True)   # required for magic library to identify file types
 
-	for item in os.listdir(src):
-		item_path = src+item
-		# print(item_path)
+# 	for item in os.listdir(src):
+# 		item_path = src+item
+# 		# print(item_path)
 
-		# if current item is a file
-		if os.path.isfile(item_path):
-			# print("Is File:\t"+item)
-			# print(magic.from_file(item_path))
+# 		# if current item is a file
+# 		if os.path.isfile(item_path):
+# 			# print("Is File:\t"+item)
+# 			# print(magic.from_file(item_path))
 
-			file_type = mime.from_file(item_path)
-			# print (file_type)
+# 			file_type = mime.from_file(item_path)
+# 			# print (file_type)
 
-			# if file is of required type
-			if file_type.find('audio') != -1:
+# 			# if file is of required type
+# 			if file_type.find('audio') != -1:
 
-				# mark new dir if file type matches (for counter)
-				if new_sub_dir is False:
-					new_sub_dir = True
+# 				# mark new dir if file type matches (for counter)
+# 				if new_sub_dir is False:
+# 					new_sub_dir = True
 
-				# print("Is Video:\t"+item)
-				# file_list.append(os.path.abspath(item_path))
+# 				# print("Is Video:\t"+item)
+# 				# file_list.append(os.path.abspath(item_path))
 
-				# append counter to filename if option was enabled
-				if counter >= 0:
-					file_list.append(dst+str(counter)+" "+item)
-				else:
-					file_list.append(dst+item)
-				# try:
-				# 	os.symlink(item_path, dst+item)
-				# except(FileExistsError):
-				# 	continue
+# 				# append counter to filename if option was enabled
+# 				if counter >= 0:
+# 					file_list.append(dst+str(counter)+" "+item)
+# 				else:
+# 					file_list.append(dst+item)
+# 				# try:
+# 				# 	os.symlink(item_path, dst+item)
+# 				# except(FileExistsError):
+# 				# 	continue
 
-		# if current item is a directory
-		else:
-			item_path = get_dir_path(item_path)
-			# print("Is Dire:\t"+item_path)
-			# print(item_path+"\n"+item_path)
-			# print(os.path.abspath(item_path))
-			# print(new_sub_dir)
-			if new_sub_dir and counter >= 0:
-				counter += 1
-				# print(counter)
+# 		# if current item is a directory
+# 		else:
+# 			item_path = get_dir_path(item_path)
+# 			# print("Is Dire:\t"+item_path)
+# 			# print(item_path+"\n"+item_path)
+# 			# print(os.path.abspath(item_path))
+# 			# print(new_sub_dir)
+# 			if new_sub_dir and counter >= 0:
+# 				counter += 1
+# 				# print(counter)
 
-			loop_dir(item_path, dst, file_list, counter, new_sub_dir)
+# 			loop_dir(item_path, dst, file_list, counter, new_sub_dir)
 
 def main():
 	# dst = "../../All/"
 	# src = "../../"
 	# dst = "../"
 	# src = "../"
-	dst = "/home/rez/ramdisk/"
-	src = "/home/rez/ramdisk/"
+	# dst = "/home/rez/ramdisk/"
+	# src = "/home/rez/ramdisk/"
+	dst = "./test/"
+	src = "./test/"
 	file_list = []
 
 	# test listdir
@@ -141,6 +158,7 @@ def main():
 	file_list = loop_dir(get_dir_path(src), get_dir_path(dst))
 	for file in file_list:
 		print(file)
+		break
 
 	# if len(sys.argv) != 3:
 	#     print("Expected 2 arguments (src, dst). Received: "+str(sys.argv[1:]))
