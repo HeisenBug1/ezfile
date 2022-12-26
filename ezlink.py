@@ -27,15 +27,15 @@ def rem_all_links(path):
 def loop_dir(src, dst, counter=-1):
 	file_list = []
 	dir_list = []
-	all_list = os.listdir(src)
 
 	# test var
 	loop_counter = 0
 
 	while True:
+		dir = os.listdir(src)
 		new_dir = True
 
-		for item in all_list:
+		for item in dir:
 			item_path = src+item
 
 			loop_counter += 1
@@ -67,13 +67,10 @@ def loop_dir(src, dst, counter=-1):
 			break
 		else:
 			# print("dir list size = "+str(len(dir_list)))
-			all_list.clear()
-			all_list = dir_list[:]
-			dir_list.clear()
-			src = ""
+			src = dir_list.pop()
 			# print("dir list size = "+str(len(dir_list)))
-			if loop_counter > 5:
-				sys.exit()
+			# if loop_counter > 5:
+			# 	sys.exit()
 	
 	return file_list
 
@@ -159,7 +156,6 @@ def main():
 	file_list = loop_dir(get_dir_path(src), get_dir_path(dst))
 	for file in file_list:
 		print(file)
-		break
 
 	# if len(sys.argv) != 3:
 	#     print("Expected 2 arguments (src, dst). Received: "+str(sys.argv[1:]))
