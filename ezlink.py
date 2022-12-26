@@ -15,7 +15,8 @@ def unix_path(path):
 # adds the '/' at the end of a directory
 def get_dir_path(item):
 	if os.path.isdir(item):
-		return item+'/'
+		if item[-1] != '/':
+			return item+'/'
 	return item
 
 # remove current linked files
