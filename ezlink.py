@@ -24,12 +24,15 @@ def rem_all_links(path):
 	if len(os.listdir(path)) > 0:
 		os.system('rm '+unix_path(path)+'*')
 
-def loop_dir(src, dst, counter=-1):
+def loop_dir(src, dst, counter=False):
 	file_list = []
 	dir_list = []
 
-	# test var
-	loop_counter = 0
+	if counter == True:
+		counter = 0
+	else:
+		print("Counter set to: ["+str(counter)+"] (Required Boolean Value) Defaulting to False")
+		counter = -1
 
 	while True:
 		dir = os.listdir(src)
@@ -38,15 +41,12 @@ def loop_dir(src, dst, counter=-1):
 		for item in dir:
 			item_path = src+item
 
-			loop_counter += 1
-
 			# if current item is a file
 			if os.path.isfile(item_path):
 				file_type = mime.from_file(item_path)
 
 				# if file is of required type
 				if file_type.find('audio') != -1:
-					print("Matched: "+item)
 					# append counter to filename if option was enabled
 					if counter >= 0:
 						if new_dir:
@@ -58,19 +58,12 @@ def loop_dir(src, dst, counter=-1):
 
 			# if current item is a sub directory
 			else:
-				print("Dir: "+item_path)
 				dir_list.append(get_dir_path(item_path))
-				# dir_list.append(item_path+'/')
 	
 		if len(dir_list) == 0:
-			print("dir list == 0")
 			break
 		else:
-			# print("dir list size = "+str(len(dir_list)))
 			src = dir_list.pop()
-			# print("dir list size = "+str(len(dir_list)))
-			# if loop_counter > 5:
-			# 	sys.exit()
 	
 	return file_list
 
@@ -153,7 +146,7 @@ def main():
 	src = os.path.abspath(src)
 	dst = os.path.abspath(dst)
 	# loop_dir(get_dir_path(src), get_dir_path(dst), file_list, counter=0)
-	file_list = loop_dir(get_dir_path(src), get_dir_path(dst))
+	file_list = loop_dir(get_dir_path(src), get_dir_path(dst), True)
 	for file in file_list:
 		print(file)
 
