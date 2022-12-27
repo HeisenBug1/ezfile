@@ -81,15 +81,31 @@ def read_args():
     parser = argparse.ArgumentParser(description=app_desc)
 
     parser.add_argument("-V", "--version", help="show program version", action="store_true")
-    parser.add_argument("-s", "--source", help="The source directory to search in", required=True, dest='src')
-    parser.add_argument("-d", "--destination", help="The destination directory to copy/move/link files to", required=True, dest='dst')
-    parser.add_argument("-t", "--type", help="File type to search: audio|video|python|etc", required=True)
+    parser.add_argument('--copy', help='Copy files')
+    parser.add_argument('--move', help='Move files')
+    parser.add_argument('--link', help='Symbolic link files')
+    parser.add_argument("-s", "--source", help="The source directory to search in", required=True)
+    parser.add_argument("-d", "--destination", help="The destination directory to [copy|move|link] files to", required=True)
+    parser.add_argument("-t", "--type", help="File type to search: [audio|video|python|etc]", required=True)
+    parser.add_argument('--serialize', '--counter', help='Appends a counter suffix to each file per sub-directory. (Helps with grouping)', default=False, action="store_true")
 
     args = parser.parse_args()
 
     if args.version:
         print("exfile version: 0.1")
         sys.exit(0)
+
+    # verify file operation choice
+    op_choices = []
+    if args.copy:
+        op_choices.append('cp')
+    if args.move:
+        op_choices.append('mv')
+    if args.link:
+        op_choices.append('ln -s')
+    if len(op_choices) != 1:
+        print("Error: 0 or > 1 file operation provided. Choose between [copy|move|link]")
+        sys.exit(3)
 
     # verify srouce directory exists
     if not os.path.isdir(args.src):
@@ -112,7 +128,9 @@ def read_args():
     arg_dict = {
         'src': args.src,
         'dst': args.dst,
-        'type': args.type
+        'type': args.type,
+        'counter': args.counter,
+        'op': op_choices.pop()
     }
 
     return arg_dict
@@ -121,7 +139,7 @@ def read_args():
 def main():
 
     # read user arguments
-    read_args()
+    args = read_args()
 
     # dst = "./test/"
     # src = "./test/"
