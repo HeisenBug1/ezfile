@@ -81,9 +81,9 @@ def read_args():
     parser = argparse.ArgumentParser(description=app_desc)
 
     parser.add_argument("-V", "--version", help="show program version", action="store_true")
-    parser.add_argument('--copy', help='Copy files')
-    parser.add_argument('--move', help='Move files')
-    parser.add_argument('--link', help='Symbolic link files')
+    parser.add_argument('--copy', help='Copy files', action="store_true")
+    parser.add_argument('--move', help='Move files', action="store_true")
+    parser.add_argument('--link', help='Symbolic link files', action="store_true")
     parser.add_argument("-s", "--source", help="The source directory to search in", required=True)
     parser.add_argument("-d", "--destination", help="The destination directory to [copy|move|link] files to", required=True)
     parser.add_argument("-t", "--type", help="File type to search: [audio|video|python|etc]", required=True)
@@ -108,17 +108,17 @@ def read_args():
         sys.exit(3)
 
     # verify srouce directory exists
-    if not os.path.isdir(args.src):
-        print("Source: ["+args.src+"] is not a valid directory")
+    if not os.path.isdir(args.source):
+        print("Source: ["+args.source+"] is not a valid directory")
         sys.exit(1)
 
     # verify destination directory exists (else create it)
-    if not os.path.isdir(args.dst):
-        print(f"Destination: [{args.dst}] is not a valid directory")
+    if not os.path.isdir(args.destination):
+        print(f"Destination: [{args.destination}] is not a valid directory")
         response = input("Do you want to create it? ").lower()
         if response == 'y' or response == 'yes':
             try:
-                os.makedirs(get_dir_path(args.dst))
+                os.makedirs(get_dir_path(args.destination))
             except FileExistsError:
                 print("Error: Cannot create directory since a file already exists with that name")
                 sys.exit(2)
@@ -126,10 +126,10 @@ def read_args():
             sys.exit(0)
 
     arg_dict = {
-        'src': args.src,
-        'dst': args.dst,
+        'src': args.source,
+        'dst': args.destination,
         'type': args.type,
-        'counter': args.counter,
+        'counter': args.serialize,
         'op': op_choices.pop()
     }
 
@@ -140,6 +140,7 @@ def main():
 
     # read user arguments
     args = read_args()
+    print(args)
 
     # dst = "./test/"
     # src = "./test/"
