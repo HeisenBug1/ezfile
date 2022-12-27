@@ -36,30 +36,31 @@ def find(src, dst, counter=False):
         counter = -1
 
     while True:
-        dir = os.listdir(src)
-        new_dir = True
+        if src != dst:
+            dir = os.listdir(src)
+            new_dir = True
 
-        for item in dir:
-            item_path = src+item
+            for item in dir:
+                item_path = src+item
 
-            # if current item is a file
-            if os.path.isfile(item_path):
-                file_type = mime.from_file(item_path)
+                # if current item is a file
+                if os.path.isfile(item_path):
+                    file_type = mime.from_file(item_path)
 
-                # if file is of required type
-                if file_type.find('audio') != -1:
-                    # append counter to filename if option was enabled
-                    if counter >= 0:
-                        if new_dir:
-                            counter += 1
-                            new_dir = False
-                        file_list.append(dst+str(counter)+" "+item)
-                    else:
-                        file_list.append(dst+item)
+                    # if file is of required type
+                    if file_type.find('audio') != -1:
+                        # append counter to filename if option was enabled
+                        if counter >= 0:
+                            if new_dir:
+                                counter += 1
+                                new_dir = False
+                            file_list.append(dst+str(counter)+" "+item)
+                        else:
+                            file_list.append(dst+item)
 
-            # if current item is a sub directory
-            else:
-                dir_list.append(get_dir_path(item_path))
+                # if current item is a sub directory
+                else:
+                    dir_list.append(get_dir_path(item_path))
 
         if len(dir_list) == 0:
             break
