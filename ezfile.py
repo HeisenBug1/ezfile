@@ -53,6 +53,7 @@ def find(src="", dst="", type="", counter=False):
 
 					# if file is of required type
 					if file_type.find(type) != -1:
+
 						# append counter to filename if option was enabled
 						if counter >= 0:
 							if new_dir:
@@ -142,7 +143,11 @@ def read_args():
 			if response == 'y' or response == 'yes':
 				try:
 					os.makedirs(dst)
-					arg_dict['dst'] = dst
+
+					# this is to make sure the trailing '/' after path to dir
+					# is present after creating a non-existing directory
+					arg_dict['dst'] = get_dir_path(os.path.abspath(args.destination))
+
 				except FileExistsError:
 					print("Error: Cannot create directory since a file already exists with that name")
 					sys.exit(2)
@@ -172,8 +177,8 @@ def main():
 	
 	file_list = find(src, dst, type, serialize)
 
-	print(f"""Found: [{len(file_list)}] items in [{args['src']}]
-	Performing [{args['op']}] task on them to [{args['dst']}]""")
+	print(f"""Found: [{len(file_list)}] items in [{src}]
+	Performing [{file_op}] task on them to [{dst}]""")
 
 	for file_src, file_dst in file_list:
 		if file_op == 'print':
