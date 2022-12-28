@@ -2,6 +2,7 @@ import os
 import magic
 import argparse
 import sys
+import shutil
 
 # required for magic library to identify file types
 mime = magic.Magic(mime=True)
@@ -105,9 +106,9 @@ def read_args():
 	# verify file operation choice
 	op_choices = []
 	if args.copy:
-		op_choices.append('cp')
+		op_choices.append('copy')
 	if args.move:
-		op_choices.append('mv')
+		op_choices.append('move')
 	if args.link:
 		op_choices.append('link')
 	if args.print:
@@ -186,9 +187,17 @@ def main():
 		if file_op == 'link':
 			try:
 				os.symlink(file_src, file_dst)
+				print(f"Symbolic Linked: {file_src}")
 			except(FileExistsError):
 				# file exists
+				print(f"Symbolic Link Exists in Destination [Skipping]: {file_src}")
 				continue
+		if file_op == 'move':
+			shutil.move(file_src, file_dst)
+			print(f"Moved: {file_src}")
+		if file_op == 'copy':
+			shutil.copy2(file_src, file_dst)
+			print(f"Copied: {file_src}")
 
 
 if __name__ == "__main__":
