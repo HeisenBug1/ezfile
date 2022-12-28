@@ -4,3 +4,4 @@ ignored
 test
 .DS_Store
 dist
+build
