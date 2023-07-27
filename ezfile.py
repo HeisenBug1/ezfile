@@ -91,6 +91,7 @@ def read_args():
 	parser.add_argument('-c', '--copy', help='Copy files', action="store_true")
 	parser.add_argument('-m', '--move', help='Move files', action="store_true")
 	parser.add_argument('-l', '--link', help='Symbolic link files', action="store_true")
+	parser.add_argument('-D', '--delete', help='Delete files', action='store_true')
 	parser.add_argument('-p', '--print', help='Print to screen', action='store_true')
 	parser.add_argument("-s", "--source", help="The source directory to search in", required=True)
 	parser.add_argument("-d", "--destination", help="The destination directory to [copy|move|link] files to")
@@ -100,7 +101,7 @@ def read_args():
 	args = parser.parse_args()
 
 	if args.version:
-		print("exfile version: 0.1")
+		print("ezfile version: 0.2")
 		sys.exit(0)
 
 	# verify file operation choice
@@ -111,6 +112,8 @@ def read_args():
 		op_choices.append('move')
 	if args.link:
 		op_choices.append('link')
+	if args.delete:
+		op_choices.append('delete')
 	if args.print:
 		op_choices.append('print')
 	if len(op_choices) != 1:
@@ -131,12 +134,14 @@ def read_args():
 		'dst': ""
 	}
 
-	# if print only, return
-	if arg_dict['op'] == 'print':
+	"""print & delete does not neet a destination"""
+
+	# if print OR delete, then return
+	if arg_dict['op'] == 'print' or arg_dict['op'] == 'delete':
 		return arg_dict
 
 	# ELSE verify destination directory exists (else create it)
-	elif arg_dict['op'] != 'print' and args.destination:
+	elif arg_dict['op'] != 'print' and arg_dict['op'] != 'delete' and args.destination:
 		dst = get_dir_path(os.path.abspath(args.destination))
 		if not os.path.isdir(dst):
 			print(f"Destination: [{dst}] is not a valid directory")
@@ -174,6 +179,9 @@ def main():
 	file_op = args['op']
 	serialize = args['counter']
 
+	# delete all flag (false by default)
+	del_all = False
+
 	# rem_all_links(dst)
 	
 	file_list = find(src, dst, type, serialize)
@@ -184,6 +192,16 @@ def main():
 	for file_src, file_dst in file_list:
 		if file_op == 'print':
 			print(file_src)
+		if file_op == 'delete':
+			if not del_all:
+				res = input(f"Delete {file_src}? (y|YES) ['YES' for all files]")
+				if res.lower() == 'y':
+					os.remove(file_src)
+				elif res == 'YES':
+					os.remove(file_src)
+					del_all = True
+			else:
+				os.remove(file_src)
 		if file_op == 'link':
 			try:
 				os.symlink(file_src, file_dst)
