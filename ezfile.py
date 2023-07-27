@@ -214,8 +214,12 @@ def main():
 			shutil.move(file_src, file_dst)
 			print(f"Moved: {file_src}")
 		if file_op == 'copy':
-			shutil.copy2(file_src, file_dst)
-			print(f"Copied: {file_src}")
+			try:
+				shutil.copy2(file_src, file_dst)
+				print(f"Copied: {file_src}")
+			except OSError:
+				print(f"OSError, skipping {file_src}")
+				continue
 
 
 if __name__ == "__main__":
