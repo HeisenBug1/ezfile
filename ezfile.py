@@ -1,8 +1,28 @@
-import os
-import magic
-import argparse
-import sys
-import shutil
+import os, platform, argparse, sys, shutil
+
+""" use the correct libmagic based on OS """
+
+# Check if the OS is Windows
+if platform.system() == 'Windows':
+	# Check if the OS is 64-bit
+	if platform.machine().endswith('64'):
+		try:
+			from winmagic import magic
+		except ImportError:
+			print(
+				"Error: python-magic-win64 not installed."
+				"\n\tTry 'pip install python-magic-win64'"
+				)
+			sys.exit(6) 
+	else: # if OS is 32-bit
+		print(
+			""
+			"Error: Please install the correct libmagic for your OS"
+			"\n\tPerhaps try 'pip install python-magic-bin'"
+		)
+# All other OS (Linux/Mac)
+else:
+	import magic
 
 # required for magic library to identify file types
 mime = magic.Magic(mime=True)
